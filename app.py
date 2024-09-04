@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from markupsafe import escape
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -17,6 +18,9 @@ class Todo(db.Model):
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    print("Hello World!!!")
+    print(request)
+
     if request.method == 'POST':
         task_content = request.form['content']
         new_task = Todo(content=task_content)
@@ -60,6 +64,22 @@ def update(id):
     else:
         return render_template('update.html', task=task)
 
+
+
+@app.route("/name/<name>")
+def hello(name):
+    return f"Hello, {escape(name)}!"
+
+
+@app.route('/post/<int:post_id>')
+def show_post(post_id):
+    # show the post with the given id, the id is an integer
+    return f'Post {post_id}'
+
+@app.route('/path/<path:subpath>')
+def show_subpath(subpath):
+    # show the subpath after /path/
+    return f'Subpath {escape(subpath)}'    
 
 if __name__ == "__main__":
     app.run(debug=True)
